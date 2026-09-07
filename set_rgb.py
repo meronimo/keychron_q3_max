@@ -140,8 +140,13 @@ def main():
                                   VALUE_RGB_MATRIX_BRIGHTNESS, RGB_BRIGHTNESS])
             time.sleep(0.05)
 
-            # 4. Persist to EEPROM so it survives reboot/replug
-            send_via_command(h, [ID_LIGHTING_SAVE])
+            # 4. Persist to EEPROM so it survives reboot/replug.
+            # The save command needs the channel ID too, just like
+            # SET_VALUE above - without it, QMK's via.c has no way to
+            # route the save to the RGB Matrix handler and silently
+            # no-ops (no error is reported, but nothing gets written to
+            # EEPROM, so the setting is lost on the next full reboot).
+            send_via_command(h, [ID_LIGHTING_SAVE, CHANNEL_RGB_MATRIX])
             time.sleep(0.05)
 
             h.close()
